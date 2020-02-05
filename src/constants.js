@@ -3,7 +3,7 @@ export const alphabets = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
 export const styleNames = [
     {
         alphabet: "A",
-        styles: ["Abbott", "Abyss & Habidecor", "Acqua di Parma","Adam Lippes", "Adam Selman Sport", "ADEAM","Adidas"]
+        styles: ["Abbott", "Abyss & Habidecor", "Acqua di Parma","Adam Lippes", "Adam Selman Sport", "ADEAM","Adidas","ba&sh","babywalker","Babyzen","Baccart","Baccarat","Bacon","Badgley Mischka","Corem Ipsum","Corem Ipsum","Corem Ipsum","Corem Ipsum","Corem Ipsum","Corem Ipsum","Dorem Ipsum","Dorem Ipsum","Dorem Ipsum","Dorem Ipsum"]
     },
     {
         alphabet: "B",

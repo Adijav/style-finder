@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Container from '@material-ui/core/Container';
 import {alphabets} from '../../constants';
 import {styleNames} from '../../constants';
@@ -6,12 +6,25 @@ import { Button } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import useStyles from './styleFinder.css';
+import axios from '../../axiosStyles';
 
 const StyleFinder = () => {
     const classes = useStyles();
     const scrollContainer = useRef(null);
     const styleAlphabetRef = useRef(Array.from({length: 27}, () => React.createRef()));
     const [showBackToTopIcon, setBackToTopIcon] = useState(false);
+    let styleMapper = {};
+
+    useEffect(()=> {
+        axios.get('/styles.json')
+        .then(response => {
+            response.data.forEach((style)=>{
+                styleMapper[style.charAt(0).toUpperCase()] ? styleMapper[style.charAt(0).toUpperCase()].push(style) : styleMapper[style.charAt(0).toUpperCase()] = [style];
+            });
+            console.log(styleMapper);
+
+        })
+    },[]);
     
     const handleScroll = () => {
         scrollContainer.current.scrollTop ? setBackToTopIcon(true) : setBackToTopIcon(false);
@@ -27,7 +40,7 @@ const StyleFinder = () => {
         scrollContainer.current.scrollTop = styleAlphabetRef.current[targetIndex[1]].current.offsetTop;
     }
 
-    const renderAlphabets = alphabets.map((alphabet,i) => (
+    const renderAlphabets = Object.keys(styleMapper).map((alphabet,i) => (
         <Button id={`alpha-${i}`} onClick={handleAlphabetClick} key={i} className={classes.alphabet} >{alphabet}</Button>
     ));
 
