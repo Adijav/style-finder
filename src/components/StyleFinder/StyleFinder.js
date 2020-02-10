@@ -4,29 +4,24 @@ import { Button } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import useStyles from './styleFinder.css';
-import axios from '../../axiosStyles';
+import {connect} from 'react-redux';
+import {showBackToTopIcon} from '../../js/actions/index';
+import {hideBackToTopIcon} from '../../js/actions/index';
+import fetchStyleData from '../../js/api/styleMapper';
 
-const StyleFinder = () => {
+const StyleFinder = (props) => {
     const classes = useStyles();
     const scrollContainer = useRef(null);
     const styleAlphabetRef = useRef(Array.from({length: 27}, () => React.createRef()));
-    
-    const [showBackToTopIcon, setBackToTopIcon] = useState(false);
 
     const [styleMapper, setStyleMapper] = useState({});
 
     useEffect(()=> {
-        const tempObj = {};
-        axios.get('/styles.json')
-        .then(response => {
-            response.data.forEach((style)=>{
-                tempObj[style.charAt(0).toUpperCase()] ? tempObj[style.charAt(0).toUpperCase()].push(style) : tempObj[style.charAt(0).toUpperCase()] = [style];
-            });
-            setStyleMapper(tempObj);
-        })
+        fetchStyleData().then(data => setStyleMapper(data))
     },[]);
+
     const handleScroll = () => {
-        scrollContainer.current.scrollTop ? setBackToTopIcon(true) : setBackToTopIcon(false);
+        scrollContainer.current.scrollTop ? props.showArrowIcon() : props.hideArrowIcon();
     }
 
     const handleBackToTop = () => {
@@ -57,11 +52,27 @@ const StyleFinder = () => {
                     </React.Fragment>
                 ))}
             </div>
-            {showBackToTopIcon && <Button onClick={handleBackToTop} className={classes.arrowButton}>
+            {console.log('showIcon',props.showIcon)}
+            {props.showIcon && <Button onClick={handleBackToTop} className={classes.arrowButton}>
                 <ArrowUpwardIcon className={classes.arrowUpIcon}/>
             </Button>}
         </Container>
     )
 }
 
-export default StyleFinder;
+
+
+const mapStateToProps = (state) => {
+    return {
+        showIcon: state.showBackToTopIcon
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        showArrowIcon: () => dispatch(showBackToTopIcon()),
+        hideArrowIcon: () => dispatch(hideBackToTopIcon())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StyleFinder);
