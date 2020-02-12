@@ -1,6 +1,6 @@
 import {createUseStyles} from 'react-jss';
 
-const useStyles = createUseStyles({
+const useStyles = createUseStyles(theme => ({
     container: {
         background: '#f6f8fa'
     },
@@ -12,7 +12,7 @@ const useStyles = createUseStyles({
         padding: '1em',
         '& div' : {
             margin: {
-                top: '1em'
+                //top: '1em'
             }
         }
     },
@@ -26,6 +26,6 @@ const useStyles = createUseStyles({
             margin: '1em'
         }
     }
-});
+}));
 
 export default useStyles;

@@ -1,5 +1,5 @@
 import React from 'react';
-import StyleFinder from './StyleFinder';
+import StyleFinder from './CountryFinder';
 import {configure, shallow, mount} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import Container from '@material-ui/core/Container';

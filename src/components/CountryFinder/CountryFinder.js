@@ -3,11 +3,16 @@ import Container from '@material-ui/core/Container';
 import { Button } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import useStyles from './styleFinder.css';
+import useStyles from './CountryFinder.css';
 import {connect} from 'react-redux';
 import {showBackToTopIcon} from '../../js/actions/index';
 import {hideBackToTopIcon} from '../../js/actions/index';
+import {selectCountry} from '../../js/actions/index';
 import fetchStyleData from '../../js/api/styleMapper';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
+import FormControl from '@material-ui/core/FormControl';
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 const StyleFinder = (props) => {
     const classes = useStyles();
@@ -15,6 +20,7 @@ const StyleFinder = (props) => {
     const styleAlphabetRef = useRef(Array.from({length: 27}, () => React.createRef()));
 
     const [styleMapper, setStyleMapper] = useState({});
+    const [enableButton, setEnableButton] = useState(false)
 
     useEffect(()=> {
         fetchStyleData().then(data => setStyleMapper(data))
@@ -33,7 +39,15 @@ const StyleFinder = (props) => {
         const targetIndex = targetId.split('-');
         scrollContainer.current.scrollTop = styleAlphabetRef.current[targetIndex[1]].current.offsetTop;
     }
+
+    const handleChange = event => {
+        setEnableButton(true);
+        props.selectCountry(event.target.value)
+    };
   
+    const handleButtonClick = () => {
+        props.history.push('/countryDetails')
+    }
     return (
         <Container className={classes.container} maxWidth="sm">
             <div className="alphabets">
@@ -42,20 +56,24 @@ const StyleFinder = (props) => {
                 ))}
             </div>
             <div ref={scrollContainer} className={classes.styleNames} onScroll={handleScroll}>
-                {styleMapper && Object.keys(styleMapper).map((style,i) => (
-                    <React.Fragment key={i}>
-                    <div ref={styleAlphabetRef.current[i]} id={`alphabet-${i}`}>{style}</div>
-                    <Divider/>
-                    {styleMapper[style].map((name,index) => (
-                        <div key={index}>{name}</div>
-                    ))}
-                    </React.Fragment>
-                ))}
+                <FormControl component="fieldset" className={classes.formControl}>
+                    <RadioGroup onChange={handleChange}>
+                        {styleMapper && Object.keys(styleMapper).map((style,i) => (
+                            <React.Fragment key={i}>
+                                <div ref={styleAlphabetRef.current[i]} id={`alphabet-${i}`}>{style}</div>
+                                <Divider/>
+                                {styleMapper[style].map((name,index) => (
+                                    <FormControlLabel value={name} key={index} control={<Radio />} label={name} />
+                                ))}
+                            </React.Fragment>
+                        ))}
+                    </RadioGroup>
+                </FormControl>
             </div>
-            {console.log('showIcon',props.showIcon)}
             {props.showIcon && <Button onClick={handleBackToTop} className={classes.arrowButton}>
                 <ArrowUpwardIcon className={classes.arrowUpIcon}/>
             </Button>}
+            <Button disabled={!enableButton} variant="contained" onClick={handleButtonClick} color="primary">Next</Button>
         </Container>
     )
 }
@@ -71,7 +89,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         showArrowIcon: () => dispatch(showBackToTopIcon()),
-        hideArrowIcon: () => dispatch(hideBackToTopIcon())
+        hideArrowIcon: () => dispatch(hideBackToTopIcon()),
+        selectCountry: (payload) => dispatch(selectCountry(payload))
     }
 }
 
